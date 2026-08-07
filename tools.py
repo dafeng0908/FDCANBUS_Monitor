@@ -37,7 +37,7 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     subparsers.add_parser(
-        "architecture",
+        "architectures",
         help="Run firmware architecture checks",
     )
 
@@ -63,7 +63,7 @@ def main() -> int:
     commands: dict[str, Command] = {
         "doctor": run_doctor,
         "check": run_check,
-        "architecture": run_architecture_check,
+        "architectures": run_architecture_check,
         "build": run_build,
     }
 
