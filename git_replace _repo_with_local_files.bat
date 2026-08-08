@@ -1,4 +1,4 @@
-[Git]
+[Git repo address]
 https://github.com/dafeng0908/FDCANBUS_Monitor
 
 [Flow replace repo with local files]
@@ -15,3 +15,16 @@ git commit -m "Replace repo with local files"
 
 git fetch origin
 git push --force-with-lease -u origin main
+
+
+[close repo]
+git close https://github.com/dafeng0908/FDCANBUS_Monitor
+
+
+[Update file and then update repo/project]
+git status
+git add -A
+git commit -m "Update project"
+
+git pull --rebase origin main
+git push origin main
