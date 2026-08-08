@@ -1,11 +1,13 @@
 [Git]
 https://github.com/dafeng0908/FDCANBUS_Monitor
 
-[]
+[Flow replace repo with local files]
 git init
-git add
-git commit -m
+git add -A
+git commit -m "Replace repo with local files"
 
 git remote add origin https://github.com/dafeng0908/FDCANBUS_Monitor
 
-git push -u origin master
+git push origin main
+
+
