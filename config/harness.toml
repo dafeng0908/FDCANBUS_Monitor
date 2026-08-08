@@ -3,13 +3,12 @@
 # 相對路徑均以 repository 根目錄為基準。
 
 [firmware]
-project_dir = "firmware/NUCLEO-C542RC"
-workspace_dir = ".harness-workspace"
-project_name = "CANBUS_Monitor"
-build_configuration = "Debug"
-artifact = "firmware/NUCLEO-C542RC/Debug/CANBUS_Monitor.elf"
+project_dir = "firmware/FDCAN_TOOL_cmake"
+project_name = "FDCAN_TOOL"
+configure_preset = "debug_GCC_NUCLEO-C542RC"
+build_preset = "debug_GCC_NUCLEO-C542RC"
+artifact = "build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf"
 timeout_seconds = 600
-clean_build = true
 
 [tools]
 # 請依實際安裝版本修改。

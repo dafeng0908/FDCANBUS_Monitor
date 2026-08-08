@@ -1,0 +1,34 @@
+name: Harness checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  stage-0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ARM GNU Toolchain
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: 14.2.Rel1
+      - name: Verify harness and firmware build
+        run: |
+          python tools.py doctor
+          python tools.py check
+          python tools.py build
+      - name: Upload build evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-evidence
+          path: |
+            reports/latest/
+            firmware/FDCAN_TOOL_cmake/build/**/*.elf
+            firmware/FDCAN_TOOL_cmake/build/**/*.map
+          if-no-files-found: warn

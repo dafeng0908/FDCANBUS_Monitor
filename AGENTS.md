@@ -12,7 +12,7 @@ docs/exec-plans/active/
 
 ## Architecture
 
-docs/architecture/
+docs/architectures/
 
 ## Requirements
 

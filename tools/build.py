@@ -1,39 +1,130 @@
 from __future__ import annotations
 
+import shutil
+import tomllib
+from pathlib import Path
+
+from tools.common import REPO_ROOT, run_command
 from tools.report_generator import write_reports
 from tools.result import CheckResult, Status, print_results
 
 
+CONFIG_PATH = REPO_ROOT / "config" / "harness.toml"
+
+
+def load_firmware_config() -> dict[str, object]:
+    with CONFIG_PATH.open("rb") as config_file:
+        config = tomllib.load(config_file)
+    return config["firmware"]
+
+
+def write_build_logs(stdout: str, stderr: str) -> None:
+    reports = load_reports_config()
+    for key, content in (("stdout_log", stdout), ("stderr_log", stderr)):
+        path = REPO_ROOT / str(reports[key])
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+
+
+def load_reports_config() -> dict[str, object]:
+    with CONFIG_PATH.open("rb") as config_file:
+        config = tomllib.load(config_file)
+    return config["reports"]
+
+
 def run() -> int:
-    """
-    Firmware build 尚未實作。
+    """Configure and build the firmware using the committed CMake preset."""
+    results: list[CheckResult] = []
 
-    回傳 2，表示功能尚未建立，不可視為 PASS。
-    """
-    results = [
-        CheckResult(
-            name="firmware-build",
-            status=Status.SKIP,
-            message=(
-                "Firmware build is not implemented. "
-                "STM32CubeIDE project has not been integrated."
-            ),
-            required=True,
-        )
-    ]
+    if not CONFIG_PATH.exists():
+        results.append(CheckResult(
+            name="build-config", status=Status.FAIL,
+            message="Missing config/harness.toml.", file="config/harness.toml",
+        ))
+    elif shutil.which("cmake") is None:
+        results.append(CheckResult(
+            name="cmake", status=Status.FAIL,
+            message="CMake was not found in PATH.", file="config/harness.toml",
+        ))
+    elif shutil.which("arm-none-eabi-gcc") is None:
+        message = "ARM GNU Toolchain (arm-none-eabi-gcc) was not found in PATH."
+        results.append(CheckResult(
+            name="arm-gnu-toolchain", status=Status.FAIL,
+            message=message, file="config/harness.toml",
+        ))
+        write_build_logs("", message + "\n")
+    else:
+        try:
+            config = load_firmware_config()
+            project_dir = REPO_ROOT / str(config["project_dir"])
+            configure_preset = str(config["configure_preset"])
+            build_preset = str(config["build_preset"])
+            timeout_seconds = int(config["timeout_seconds"])
+        except (KeyError, OSError, tomllib.TOMLDecodeError, ValueError) as exc:
+            results.append(CheckResult(
+                name="build-config", status=Status.FAIL,
+                message=f"Invalid firmware build configuration: {exc}",
+                file="config/harness.toml",
+            ))
+        else:
+            if not project_dir.is_dir():
+                results.append(CheckResult(
+                    name="firmware-project", status=Status.FAIL,
+                    message="Configured firmware project directory is missing.",
+                    file=str(config["project_dir"]),
+                ))
+            else:
+                configure = run_command(
+                    ["cmake", "--preset", configure_preset],
+                    cwd=project_dir,
+                    timeout_seconds=timeout_seconds,
+                )
+                stdout = configure.stdout
+                stderr = configure.stderr
+                if configure.returncode != 0:
+                    results.append(CheckResult(
+                        name="firmware-configure", status=Status.FAIL,
+                        message=(f"cmake --preset {configure_preset} failed "
+                                 f"with exit code {configure.returncode}."),
+                        file=str(config["project_dir"]),
+                    ))
+                else:
+                    build = run_command(
+                        ["cmake", "--build", "--preset", build_preset],
+                        cwd=project_dir,
+                        timeout_seconds=timeout_seconds,
+                    )
+                    stdout += build.stdout
+                    stderr += build.stderr
+                    if build.returncode != 0:
+                        results.append(CheckResult(
+                            name="firmware-build", status=Status.FAIL,
+                            message=(f"cmake --build --preset {build_preset} failed "
+                                     f"with exit code {build.returncode}."),
+                            file=str(config["project_dir"]),
+                        ))
+                    else:
+                        artifact = project_dir / str(config["artifact"])
+                        if artifact.is_file():
+                            results.append(CheckResult(
+                                name="firmware-build", status=Status.PASS,
+                                message="Firmware built successfully; ELF artifact exists.",
+                                file=str(config["artifact"]),
+                            ))
+                        else:
+                            results.append(CheckResult(
+                                name="firmware-artifact", status=Status.FAIL,
+                                message="Build completed but the configured ELF artifact is missing.",
+                                file=str(config["artifact"]),
+                            ))
+                write_build_logs(stdout, stderr)
 
-    exit_code = 2
-
+    exit_code = 0 if all(result.status == Status.PASS for result in results) else 1
     print_results(results)
-
     json_path, markdown_path = write_reports(
-        report_name="build",
-        command="python tools.py build",
-        exit_code=exit_code,
-        results=results,
+        report_name="build", command="python tools.py build",
+        exit_code=exit_code, results=results,
     )
-
     print(f"[INFO] JSON report: {json_path}")
     print(f"[INFO] Markdown report: {markdown_path}")
-
     return exit_code

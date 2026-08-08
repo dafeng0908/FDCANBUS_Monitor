@@ -105,6 +105,11 @@ def collect_results() -> list[CheckResult]:
             required=False,
             display_name="Ninja",
         ),
+        check_tool(
+            "arm-none-eabi-gcc",
+            required=False,
+            display_name="ARM GNU Toolchain",
+        ),
     ]
 
 
