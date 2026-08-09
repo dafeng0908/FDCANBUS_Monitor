@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import tomllib
 from pathlib import Path
@@ -32,6 +33,16 @@ def load_reports_config() -> dict[str, object]:
     return config["reports"]
 
 
+def configured_toolchain_bin() -> Path | None:
+    """Return the CubeIDE-bundled ARM toolchain path when configured."""
+    try:
+        with CONFIG_PATH.open("rb") as config_file:
+            tools = tomllib.load(config_file)["tools"]
+        return Path(str(tools["arm_gnu_toolchain_bin"]))
+    except (KeyError, OSError, tomllib.TOMLDecodeError):
+        return None
+
+
 def run() -> int:
     """Configure and build the firmware using the committed CMake preset."""
     results: list[CheckResult] = []
@@ -46,8 +57,14 @@ def run() -> int:
             name="cmake", status=Status.FAIL,
             message="CMake was not found in PATH.", file="config/harness.toml",
         ))
-    elif shutil.which("arm-none-eabi-gcc") is None:
-        message = "ARM GNU Toolchain (arm-none-eabi-gcc) was not found in PATH."
+    elif (
+        (toolchain_bin := configured_toolchain_bin()) is None
+        or not (toolchain_bin / "arm-none-eabi-gcc.exe").is_file()
+    ):
+        message = (
+            "CubeIDE ARM GNU Toolchain was not found at the configured "
+            "arm_gnu_toolchain_bin path."
+        )
         results.append(CheckResult(
             name="arm-gnu-toolchain", status=Status.FAIL,
             message=message, file="config/harness.toml",
@@ -74,10 +91,18 @@ def run() -> int:
                     file=str(config["project_dir"]),
                 ))
             else:
+                toolchain_environment = {
+                    "PATH": (
+                        str(toolchain_bin)
+                        + os.pathsep
+                        + os.environ.get("PATH", "")
+                    ),
+                }
                 configure = run_command(
                     ["cmake", "--preset", configure_preset],
                     cwd=project_dir,
                     timeout_seconds=timeout_seconds,
+                    environment=toolchain_environment,
                 )
                 stdout = configure.stdout
                 stderr = configure.stderr
@@ -93,6 +118,7 @@ def run() -> int:
                         ["cmake", "--build", "--preset", build_preset],
                         cwd=project_dir,
                         timeout_seconds=timeout_seconds,
+                        environment=toolchain_environment,
                     )
                     stdout += build.stdout
                     stderr += build.stderr

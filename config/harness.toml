@@ -13,7 +13,8 @@ timeout_seconds = 600
 [tools]
 # 請依實際安裝版本修改。
 # Windows TOML 建議使用正斜線。
-stm32cubeide = "C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/stm32cubeide.exe"
+stm32cubeide = "C:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/stm32cubeide.exe"
+arm_gnu_toolchain_bin = "C:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.win32_1.0.100.202602081740/tools/bin"
 # 若已加入 PATH，也可改成：
 # stm32cubeide = "stm32cubeide"
 

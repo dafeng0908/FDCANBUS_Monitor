@@ -2,9 +2,10 @@
 
 ## Build
 
-The firmware target is `FDCAN_TOOL` in `FDCAN_TOOL_cmake/`. Install CMake, Ninja, and ARM
-GNU Toolchain, then run `python tools.py build` from the repository root. The resulting ELF
-is expected at `FDCAN_TOOL_cmake/build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf`.
+The firmware target is `FDCAN_TOOL` in `FDCAN_TOOL_cmake/`. `config/harness.toml` points to
+the ARM GNU Toolchain bundled with STM32CubeIDE 2.2.0, so run `python tools.py build` from
+the repository root without adding the compiler to the system PATH. The resulting ELF is
+expected at `FDCAN_TOOL_cmake/build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf`.
 
 ## Generated code
 

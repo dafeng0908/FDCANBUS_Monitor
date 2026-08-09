@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Sequence
+from typing import Mapping, Sequence
 
 
 # Repository 根目錄。
@@ -53,6 +54,7 @@ def run_command(
     *,
     cwd: Path | None = None,
     timeout_seconds: int = 60,
+    environment: Mapping[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     """
     執行外部命令。
@@ -69,6 +71,10 @@ def run_command(
         這個函式不使用 check=True，呼叫者必須自行處理 exit code。
     """
     try:
+        command_environment = os.environ.copy()
+        if environment:
+            command_environment.update(environment)
+
         return subprocess.run(
             list(command),
             cwd=cwd or REPO_ROOT,
@@ -77,6 +83,7 @@ def run_command(
             encoding="utf-8",
             errors="replace",
             timeout=timeout_seconds,
+            env=command_environment,
             check=False,
         )
     except FileNotFoundError as exc:

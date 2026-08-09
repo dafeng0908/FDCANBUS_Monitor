@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import shutil
 import sys
+import tomllib
+from pathlib import Path
 
+from tools.common import REPO_ROOT
 from tools.report_generator import write_reports
 from tools.result import (
     CheckResult,
@@ -64,6 +67,31 @@ def check_tool(
     )
 
 
+def check_configured_arm_toolchain() -> CheckResult:
+    """Check the CubeIDE-bundled compiler configured for this repository."""
+    config_path = REPO_ROOT / "config" / "harness.toml"
+    try:
+        with config_path.open("rb") as config_file:
+            tools = tomllib.load(config_file)["tools"]
+        compiler = Path(str(tools["arm_gnu_toolchain_bin"])) / "arm-none-eabi-gcc.exe"
+    except (KeyError, OSError, tomllib.TOMLDecodeError) as exc:
+        return CheckResult(
+            name="ARM GNU Toolchain", status=Status.WARN,
+            message=f"Configured toolchain could not be read: {exc}", required=False,
+        )
+
+    if compiler.is_file():
+        return CheckResult(
+            name="ARM GNU Toolchain", status=Status.PASS,
+            message=str(compiler), required=False,
+        )
+
+    return CheckResult(
+        name="ARM GNU Toolchain", status=Status.WARN,
+        message=f"Compiler not found: {compiler}", required=False,
+    )
+
+
 def collect_results() -> list[CheckResult]:
     """
     收集開發環境檢查結果。
@@ -105,11 +133,7 @@ def collect_results() -> list[CheckResult]:
             required=False,
             display_name="Ninja",
         ),
-        check_tool(
-            "arm-none-eabi-gcc",
-            required=False,
-            display_name="ARM GNU Toolchain",
-        ),
+        check_configured_arm_toolchain(),
     ]
 
 
