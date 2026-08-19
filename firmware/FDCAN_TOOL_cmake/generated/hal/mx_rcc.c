@@ -103,5 +103,11 @@ void mx_rcc_deinit(void)
   */
 system_status_t mx_rcc_peripherals_clock_config(void)
 {
+  /* Peripherals using PCLK1 (144 MHz):
+    FDCAN1
+    FDCAN2
+    I2C1
+  */
+
   return SYSTEM_OK;
 }

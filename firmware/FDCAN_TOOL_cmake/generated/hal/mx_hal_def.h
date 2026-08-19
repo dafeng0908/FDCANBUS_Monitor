@@ -29,8 +29,11 @@ extern "C" {
 #include "stm32_hal.h"
 #include "mx_cortex_mpu.h"
 #include "mx_cortex_nvic.h"
+#include "mx_fdcan1.h"
+#include "mx_fdcan2.h"
 #include "mx_icache.h"
 #include "mx_rcc.h"
+#include "mx_i2c1.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -52,6 +55,18 @@ extern "C" {
     ************************************************************* */
 
   /* *************************************************************
+    FDCAN1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan1_init
+    ************************************************************* */
+
+  /* *************************************************************
+    FDCAN2: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan2_init
+    ************************************************************* */
+
+  /* *************************************************************
     ICACHE: No software label has been defined for this peripheral instance
       in the STM32CubeMX2 configuration panel.
       As a result, no aliases are generated for mx_icache_init
@@ -61,6 +76,12 @@ extern "C" {
     RCC: No software label has been defined for this peripheral instance
       in the STM32CubeMX2 configuration panel.
       As a result, no aliases are generated for mx_rcc_init
+    ************************************************************* */
+
+  /* *************************************************************
+    I2C1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_i2c1_smbus_init
     ************************************************************* */
 
 /* ########################################################### */
@@ -80,9 +101,27 @@ extern "C" {
     ************************************************************* */
 
   /* *************************************************************
+    FDCAN1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan1_deinit
+    ************************************************************* */
+
+  /* *************************************************************
+    FDCAN2: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan2_deinit
+    ************************************************************* */
+
+  /* *************************************************************
     ICACHE: No software label has been defined for this peripheral instance
       in the STM32CubeMX2 configuration panel.
       As a result, no aliases are generated for mx_icache_deinit
+    ************************************************************* */
+
+  /* *************************************************************
+    I2C1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_i2c1_smbus_deinit
     ************************************************************* */
 
 /* ########################################################### */
@@ -90,9 +129,27 @@ extern "C" {
 /* ########### Aliases to get HAL handle functions ########### */
 
   /* *************************************************************
+    FDCAN1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan1_gethandle
+    ************************************************************* */
+
+  /* *************************************************************
+    FDCAN2: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_fdcan2_gethandle
+    ************************************************************* */
+
+  /* *************************************************************
     ICACHE: No software label has been defined for this peripheral instance
       in the STM32CubeMX2 configuration panel.
       As a result, no aliases are generated for mx_icache_gethandle
+    ************************************************************* */
+
+  /* *************************************************************
+    I2C1: No software label has been defined for this peripheral instance
+      in the STM32CubeMX2 configuration panel.
+      As a result, no aliases are generated for mx_i2c1_smbus_gethandle
     ************************************************************* */
 
 /* ########################################################### */

@@ -15,7 +15,8 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include "app_runtime.h"
+#include "bsp_platform.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -29,21 +30,16 @@
   */
 int main(void)
 {
-  /** System Init: this code placed in targets folder initializes your system.
-    * It calls the initialization (and sets the initial configuration) of the peripherals.
-    * You can use STM32CubeMX to generate and call this code or not in this project.
-    * It also contains the HAL initialization and the initial clock configuration.
-    */
-  if (mx_system_init() != SYSTEM_OK)
+  if (bsp_platform_initialize() != BSP_PLATFORM_STATUS_OK)
   {
     return (-1);
   }
-  else
+
+  app_runtime_initialize();
+
+  while (1)
   {
-    /*
-      * You can start your application code here
-      */
-    while (1) {}
+    app_runtime_poll();
   }
 } /* end main */
 

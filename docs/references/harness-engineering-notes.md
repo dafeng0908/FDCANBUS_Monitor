@@ -23,7 +23,6 @@ Stage 0 — Harness bootstrap
 
 python tools.py doctor
 python tools.py build
-python tools.py test
 python tools.py check
 
 ## Repository Layout

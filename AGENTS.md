@@ -24,6 +24,9 @@ docs/requirements/
 - Application and service modules must not include STM32 HAL headers.
 - ISR code must not block, allocate memory, or call printf.
 - Do not report PASS unless the command was actually executed.
+- Every repository update must add a Markdown change record under `history/` named
+  `YYYYMMDDHHMM_changelog.md`. The record must state its local date and time and list the
+  updated items.
 
 ## Commands
 
@@ -37,3 +40,4 @@ python tools.py build
 - Repository and architecture checks pass.
 - Test and analysis results contain actual evidence.
 - The active execution plan is updated.
+- A timestamped change record is added under `history/`.

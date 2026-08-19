@@ -96,6 +96,24 @@ system_status_t mx_system_init(void)
     Peripheral init section
   */
 
+  /** FDCAN1 */
+  if (mx_fdcan1_init() == NULL)
+  {
+    return SYSTEM_PERIPHERAL_ERROR;
+  }
+
+  /** FDCAN2 */
+  if (mx_fdcan2_init() == NULL)
+  {
+    return SYSTEM_PERIPHERAL_ERROR;
+  }
+
+  /** I2C1 */
+  if (mx_i2c1_smbus_init() == NULL)
+  {
+    return SYSTEM_PERIPHERAL_ERROR;
+  }
+
   if (post_system_init_hook() != SYSTEM_OK)
   {
     return SYSTEM_POSTSYSTEM_ERROR;

@@ -234,7 +234,7 @@ extern "C" {
   * @{
   */
 /* ########################## HAL_DMA Config #################################### */
-#define USE_HAL_DMA_MODULE                      0U
+#define USE_HAL_DMA_MODULE                      1U
 #define USE_HAL_DMA_CLK_ENABLE_MODEL            HAL_CLK_ENABLE_NO
 #define USE_HAL_DMA_USER_DATA                   0U
 #define USE_HAL_DMA_GET_LAST_ERRORS             0U
@@ -274,7 +274,7 @@ extern "C" {
   * @{
   */
 /* ########################## HAL_FDCAN Config ################################## */
-#define USE_HAL_FDCAN_MODULE                    0U
+#define USE_HAL_FDCAN_MODULE                    1U
 #define USE_HAL_FDCAN_CLK_ENABLE_MODEL          HAL_CLK_ENABLE_NO
 #define USE_HAL_FDCAN_REGISTER_CALLBACKS        0U
 #define USE_HAL_FDCAN_USER_DATA                 0U
@@ -563,7 +563,7 @@ extern "C" {
   * @{
   */
 /* ########################## HAL_SMBUS Config ################################## */
-#define USE_HAL_SMBUS_MODULE                    0U
+#define USE_HAL_SMBUS_MODULE                    1U
 #define USE_HAL_SMBUS_CLK_ENABLE_MODEL          HAL_CLK_ENABLE_NO
 #define USE_HAL_SMBUS_REGISTER_CALLBACKS        0U
 #define USE_HAL_SMBUS_USER_DATA                 0U

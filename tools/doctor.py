@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 import tomllib
@@ -68,12 +69,13 @@ def check_tool(
 
 
 def check_configured_arm_toolchain() -> CheckResult:
-    """Check the CubeIDE-bundled compiler configured for this repository."""
+    """Check the configured compiler first, then the portable PATH lookup."""
     config_path = REPO_ROOT / "config" / "harness.toml"
     try:
         with config_path.open("rb") as config_file:
             tools = tomllib.load(config_file)["tools"]
-        compiler = Path(str(tools["arm_gnu_toolchain_bin"])) / "arm-none-eabi-gcc.exe"
+        compiler_name = "arm-none-eabi-gcc.exe" if os.name == "nt" else "arm-none-eabi-gcc"
+        compiler = Path(str(tools["arm_gnu_toolchain_bin"])) / compiler_name
     except (KeyError, OSError, tomllib.TOMLDecodeError) as exc:
         return CheckResult(
             name="ARM GNU Toolchain", status=Status.WARN,
@@ -86,9 +88,16 @@ def check_configured_arm_toolchain() -> CheckResult:
             message=str(compiler), required=False,
         )
 
+    path_compiler = shutil.which("arm-none-eabi-gcc")
+    if path_compiler:
+        return CheckResult(
+            name="ARM GNU Toolchain", status=Status.PASS,
+            message=f"Found on PATH: {path_compiler}", required=False,
+        )
+
     return CheckResult(
         name="ARM GNU Toolchain", status=Status.WARN,
-        message=f"Compiler not found: {compiler}", required=False,
+        message=f"Compiler not found at {compiler} or on PATH.", required=False,
     )
 
 

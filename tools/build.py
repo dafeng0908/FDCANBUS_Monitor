@@ -34,7 +34,7 @@ def load_reports_config() -> dict[str, object]:
 
 
 def configured_toolchain_bin() -> Path | None:
-    """Return the CubeIDE-bundled ARM toolchain path when configured."""
+    """Return a configured toolchain directory when one is available."""
     try:
         with CONFIG_PATH.open("rb") as config_file:
             tools = tomllib.load(config_file)["tools"]
@@ -43,9 +43,30 @@ def configured_toolchain_bin() -> Path | None:
         return None
 
 
+def find_arm_gnu_compiler() -> tuple[Path | None, Path | None]:
+    """Find the compiler from the repository override or the current PATH.
+
+    The optional repository setting supports a developer's CubeIDE installation.
+    CI and other developer environments instead use the portable PATH lookup.
+    """
+    compiler_name = "arm-none-eabi-gcc.exe" if os.name == "nt" else "arm-none-eabi-gcc"
+    configured_bin = configured_toolchain_bin()
+
+    if configured_bin is not None and (configured_bin / compiler_name).is_file():
+        return configured_bin / compiler_name, configured_bin
+
+    path_compiler = shutil.which("arm-none-eabi-gcc")
+    if path_compiler:
+        compiler = Path(path_compiler)
+        return compiler, compiler.parent
+
+    return None, None
+
+
 def run() -> int:
     """Configure and build the firmware using the committed CMake preset."""
     results: list[CheckResult] = []
+    compiler, toolchain_bin = find_arm_gnu_compiler()
 
     if not CONFIG_PATH.exists():
         results.append(CheckResult(
@@ -57,13 +78,10 @@ def run() -> int:
             name="cmake", status=Status.FAIL,
             message="CMake was not found in PATH.", file="config/harness.toml",
         ))
-    elif (
-        (toolchain_bin := configured_toolchain_bin()) is None
-        or not (toolchain_bin / "arm-none-eabi-gcc.exe").is_file()
-    ):
+    elif compiler is None or toolchain_bin is None:
         message = (
-            "CubeIDE ARM GNU Toolchain was not found at the configured "
-            "arm_gnu_toolchain_bin path."
+            "ARM GNU Toolchain was not found in the configured "
+            "arm_gnu_toolchain_bin path or on PATH."
         )
         results.append(CheckResult(
             name="arm-gnu-toolchain", status=Status.FAIL,
@@ -91,6 +109,8 @@ def run() -> int:
                     file=str(config["project_dir"]),
                 ))
             else:
+                assert compiler is not None
+                assert toolchain_bin is not None
                 toolchain_environment = {
                     "PATH": (
                         str(toolchain_bin)

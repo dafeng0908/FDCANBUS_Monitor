@@ -54,6 +54,8 @@ LAYER_RULES: dict[str, list[tuple[str, re.Pattern[str]]]] = {
     ],
 }
 
+PRODUCT_LAYER_NAMES = ("BSP", "Services", "App")
+
 ISR_FUNCTION_PATTERN = re.compile(
     r"\b([A-Za-z_][A-Za-z0-9_]*(?:IRQHandler|Callback))\s*\([^;]*\)\s*\{"
 )
@@ -194,18 +196,24 @@ def check_layer_rules() -> list[CheckResult]:
             )
         ]
 
+    for layer_name in PRODUCT_LAYER_NAMES:
+        layer_root = FIRMWARE_ROOT / layer_name
+        layer_sources = source_files(layer_root)
+
+        if not layer_root.exists() or not layer_sources:
+            results.append(
+                CheckResult(
+                    name=f"architecture-layer-{layer_name.lower()}",
+                    status=Status.FAIL,
+                    message=f"{layer_name} layer must contain at least one C source or header file.",
+                    file=relative_to_repo(layer_root),
+                )
+            )
+
     for layer_name, rules in LAYER_RULES.items():
         layer_root = FIRMWARE_ROOT / layer_name
 
         if not layer_root.exists():
-            results.append(
-                CheckResult(
-                    name=f"architecture-layer-{layer_name.lower()}",
-                    status=Status.SKIP,
-                    message=f"{layer_name} layer does not exist yet.",
-                    required=False,
-                )
-            )
             continue
 
         violations_before = len(
@@ -259,7 +267,7 @@ def check_layer_rules() -> list[CheckResult]:
             ]
         )
 
-        if violations_after == violations_before:
+        if violations_after == violations_before and source_files(layer_root):
             results.append(
                 CheckResult(
                     name=f"architecture-layer-{layer_name.lower()}",

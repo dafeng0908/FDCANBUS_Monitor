@@ -6,12 +6,15 @@
 - **Services** expose hardware-independent CAN FD and transport operations.
 - **App** orchestrates product behaviour through service interfaces.
 
-The current generated CMake project provides startup and platform initialisation. App and
-Services directories are introduced with their first production modules; their absence is
-reported as a non-blocking bootstrap state by the architecture checker.
+Hand-written firmware is rooted at `firmware/BSP/`, `firmware/Services/`, and
+`firmware/App/`. The generated CMake entry point links all three roots. The architecture
+checker requires each layer to contain source and rejects HAL dependencies in App and
+Services.
 
 ## Build boundary
 
 The committed build entry point is `firmware/FDCAN_TOOL_cmake/CMakePresets.json`. The
-`debug_GCC_NUCLEO-C542RC` preset requires ARM GNU Toolchain (`arm-none-eabi-gcc`) on PATH.
-Use `python tools.py build` rather than invoking an IDE-specific project path.
+`debug_GCC_NUCLEO-C542RC` requires ARM GNU Toolchain. The build harness first checks the
+optional CubeIDE path in `config/harness.toml`, then falls back to `arm-none-eabi-gcc` on
+`PATH`; CI uses the latter. Use `python tools.py build` rather than invoking an IDE-specific
+project path.

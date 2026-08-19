@@ -431,7 +431,7 @@
       <require condition="CMSIS Core"/>
       <require condition="HAL GPIO Init"/>
       <require condition="HAL System Init"/>
-      <require Cclass="Device" Cgroup="STM32 LL" Csub="I2C"/>
+      <require Cclass="Device" Cgroup="STM32 HAL" Csub="SMBUS"/>
     </condition>
     <condition id="HAL CORE GPIO DMA Init and SPI">
       <description>STMicroelectronics HAL SPI Init dependencies</description>
@@ -576,6 +576,15 @@
         <file category="header" name="mx_cortex_nvic.h" />
       </files>
     </component>
+    <component generator="stm32c5xx_hal_mx2codegen" Cclass="Device" Cgroup="STM32CubeMX2 Config" Csub="FDCAN"   Cversion="2.1.0" condition="HAL CORE GPIO Init and FDCAN">
+      <description>TO BE DEFINED</description>
+      <files>
+        <file category="source" name="mx_fdcan1.c" />
+        <file category="header" name="mx_fdcan1.h" />
+        <file category="source" name="mx_fdcan2.c" />
+        <file category="header" name="mx_fdcan2.h" />
+      </files>
+    </component>
     <component generator="stm32c5xx_hal_mx2codegen" Cclass="Device" Cgroup="STM32CubeMX2 Config" Csub="ICACHE"   Cversion="2.1.0" condition="HAL CORE Init and ICACHE">
       <description>TO BE DEFINED</description>
       <files>
@@ -591,6 +600,13 @@
       <files>
         <file category="source" name="mx_rcc.c" />
         <file category="header" name="mx_rcc.h" />
+      </files>
+    </component>
+    <component generator="stm32c5xx_hal_mx2codegen" Cclass="Device" Cgroup="STM32CubeMX2 Config" Csub="SMBUS"   Cversion="2.1.0" condition="HAL CORE GPIO Init and SMBUS">
+      <description>TO BE DEFINED</description>
+      <files>
+        <file category="source" name="mx_i2c1.c" />
+        <file category="header" name="mx_i2c1.h" />
       </files>
     </component>
     <component generator="stm32c5xx_hal_mx2codegen" Cclass="Device" Cgroup="STM32CubeMX2 Config" Csub="System"   Cversion="2.1.0" condition="HAL System Init">
