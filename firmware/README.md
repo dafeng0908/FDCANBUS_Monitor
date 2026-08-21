@@ -14,3 +14,10 @@ CI. The selected compiler must match the pinned ARM GNU Toolchain 14.3.1. The re
 folders unless the generated-file workflow explicitly marks a file as user-modifiable.
 Place product code behind the BSP, Services, and App boundaries documented in
 [`docs/architectures/Firmware.md`](../docs/architectures/Firmware.md).
+
+## Software quality
+
+Run `python tools.py quality` for the completion decision. It includes Cppcheck analysis of
+hand-written firmware sources, Ceedling unit tests under `firmware/tests/`, and gcovr coverage
+checks. The baseline CAN Service suite must meet 80% overall line coverage and 90% coverage for
+the critical `firmware/Services/can/` source root.

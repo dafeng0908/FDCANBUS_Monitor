@@ -1,7 +1,9 @@
 reports/latest/*.json
 reports/latest/*.md
 reports/latest/*.log
+reports/latest/*.xml
 firmware/FDCAN_TOOL_cmake/build/
+firmware/tests/build/
 .harness-workspace/
 __pycache__/
 *.py[cod]

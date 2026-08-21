@@ -16,6 +16,11 @@
 - [ ] Critical modules coverage >= 90%
 - [ ] Architecture violations = 0
 
+## Quality command graph
+
+`python tools.py quality` executes `doctor`, `check`, `build`, `cppcheck`, `test`, and
+`coverage` in order. All six commands must exit 0 before `quality.md` reports PASS.
+
 ## Evidence
 
 Every PASS result must include:
@@ -27,4 +32,4 @@ Every PASS result must include:
 - Report path
 
 The generated `reports/latest/quality.md` is the sole evidence entry point for completion. It
-links the actual `doctor`, `check`, and `build` executions.
+links the actual `doctor`, `check`, `build`, `cppcheck`, `test`, and `coverage` executions.

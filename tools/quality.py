@@ -1,13 +1,40 @@
 from __future__ import annotations
 
 import sys
+import tomllib
 
 from tools.common import REPO_ROOT, run_command
 from tools.report_generator import write_reports
 from tools.result import CheckResult, Status, print_results
 
 
-QUALITY_COMMANDS = ("doctor", "check", "build")
+QUALITY_COMMANDS = ("doctor", "check", "build", "cppcheck", "test", "coverage")
+DEFAULT_COMMAND_TIMEOUT_SECONDS = 60
+BUILD_TIMEOUT_BUFFER_SECONDS = 60
+DEFAULT_BUILD_PHASE_TIMEOUT_SECONDS = 600
+COMMAND_TIMEOUTS = {
+    "cppcheck": 180,
+    "test": 360,
+    "coverage": 600,
+}
+
+
+def command_timeout_seconds(command_name: str) -> int:
+    """Return a timeout that accommodates each command's own execution contract."""
+    if command_name != "build":
+        return COMMAND_TIMEOUTS.get(command_name, DEFAULT_COMMAND_TIMEOUT_SECONDS)
+
+    try:
+        config_path = REPO_ROOT / "config" / "harness.toml"
+        with config_path.open("rb") as config_file:
+            phase_timeout = int(tomllib.load(config_file)["firmware"]["timeout_seconds"])
+    except (KeyError, OSError, ValueError, tomllib.TOMLDecodeError):
+        phase_timeout = DEFAULT_BUILD_PHASE_TIMEOUT_SECONDS
+
+    return max(
+        DEFAULT_COMMAND_TIMEOUT_SECONDS,
+        (2 * phase_timeout) + BUILD_TIMEOUT_BUFFER_SECONDS,
+    )
 
 
 def run() -> int:
@@ -15,10 +42,11 @@ def run() -> int:
     results: list[CheckResult] = []
 
     for command_name in QUALITY_COMMANDS:
+        timeout_seconds = command_timeout_seconds(command_name)
         process = run_command(
             [sys.executable, "tools.py", command_name],
             cwd=REPO_ROOT,
-            timeout_seconds=660,
+            timeout_seconds=timeout_seconds,
         )
         report_path = f"reports/latest/{command_name}.md"
 
@@ -28,7 +56,7 @@ def run() -> int:
                 status=Status.PASS,
                 message=(
                     f"Executed python tools.py {command_name}; exited 0. "
-                    f"Evidence: {report_path}."
+                    f"Timeout: {timeout_seconds}s. Evidence: {report_path}."
                 ),
                 file=report_path,
             ))
@@ -39,7 +67,8 @@ def run() -> int:
                 status=Status.FAIL,
                 message=(
                     f"Executed python tools.py {command_name}; exited "
-                    f"{process.returncode}. {detail[-500:]}"
+                    f"{process.returncode} after a {timeout_seconds}s timeout. "
+                    f"{detail[-500:]}"
                 ),
                 file=report_path,
             ))

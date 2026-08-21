@@ -1,0 +1,20 @@
+:project:
+  :build_root: build
+  :which_ceedling: gem
+  :use_mocks: FALSE
+
+:paths:
+  :test:
+    - +:test/**
+  :source:
+    - ../Services/can/src/**
+  :include:
+    - ../Services/can/include
+
+:plugins:
+  :enabled:
+    - gcov
+
+:gcov:
+  :gcovr:
+    :html: FALSE

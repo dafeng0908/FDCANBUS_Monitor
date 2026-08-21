@@ -24,8 +24,8 @@ path without exposing STM32 HAL dependencies outside the BSP.
 
 ## Current Step
 
-Stage 1 firmware foundation is complete; the quality-gate workflow is being adopted as the
-single completion decision.
+Stage 1 firmware foundation is complete. The quality gate now runs environment, contract,
+build, static-analysis, unit-test, and coverage checks as a single completion decision.
 
 ## Next Action
 
@@ -40,7 +40,16 @@ Implement the Stage 1 FDCAN1 BSP receive handoff and its hardware-independent Se
 - The completion decision is the automatically generated
   [`quality report`](../../../reports/latest/quality.md), which links the executed
   [`doctor`](../../../reports/latest/doctor.md), [`repository check`](../../../reports/latest/check.md),
-  and [`build`](../../../reports/latest/build.md) reports.
+  [`build`](../../../reports/latest/build.md), [`cppcheck`](../../../reports/latest/cppcheck.md),
+  [`test`](../../../reports/latest/test.md), and [`coverage`](../../../reports/latest/coverage.md)
+  reports.
+- On 2026-08-21, `python tools.py quality` passed with a build timeout derived from both
+  configured build phases plus a buffer; evidence: the generated
+  [`quality report`](../../../reports/latest/quality.md).
+- On 2026-08-21, the baseline Ceedling CAN Service suite passed and gcovr reported 100% line
+  coverage for that service; evidence: the generated
+  [`test report`](../../../reports/latest/test.md) and
+  [`coverage report`](../../../reports/latest/coverage.md).
 
 ## Out of Scope
 

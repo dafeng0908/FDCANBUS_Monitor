@@ -7,6 +7,9 @@ from collections.abc import Callable
 from tools.architecture_check import run as run_architecture_check
 from tools.build import run as run_build
 from tools.check import run as run_check
+from tools.ceedling_runner import run as run_test
+from tools.coverage_runner import run as run_coverage
+from tools.cppcheck_runner import run as run_cppcheck
 from tools.doctor import run as run_doctor
 from tools.quality import run as run_quality
 
@@ -52,6 +55,21 @@ def create_parser() -> argparse.ArgumentParser:
         help="Build firmware and PC tool",
     )
 
+    subparsers.add_parser(
+        "cppcheck",
+        help="Run static analysis for hand-written firmware sources",
+    )
+
+    subparsers.add_parser(
+        "test",
+        help="Run the Ceedling unit-test suite",
+    )
+
+    subparsers.add_parser(
+        "coverage",
+        help="Run coverage-instrumented tests and enforce coverage thresholds",
+    )
+
     return parser
 
 
@@ -72,6 +90,9 @@ def main() -> int:
         "check": run_check,
         "architectures": run_architecture_check,
         "build": run_build,
+        "cppcheck": run_cppcheck,
+        "test": run_test,
+        "coverage": run_coverage,
     }
 
     command = commands.get(args.command)
