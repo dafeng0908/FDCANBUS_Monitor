@@ -20,16 +20,27 @@ path without exposing STM32 HAL dependencies outside the BSP.
 - Only BSP includes generated STM32 platform headers.
 - App includes Services interfaces and contains no HAL dependency.
 - The CMake firmware target builds with the new source roots.
-- `python tools.py check` reports no architecture violation.
+- `python tools.py quality` passes and reports no architecture violation.
+
+## Current Step
+
+Stage 1 firmware foundation is complete; the quality-gate workflow is being adopted as the
+single completion decision.
+
+## Next Action
+
+Implement the Stage 1 FDCAN1 BSP receive handoff and its hardware-independent Service queue.
+
+## Last Verified Commit
+
+`d4ed4178dc5f68a2f5adbd7c578aabf742ec1e95`
 
 ## Verification Evidence
 
-- On 2026-08-19, `python tools.py check` exited 0. It confirmed the App and Services layers
-  have no forbidden HAL dependency and that the ISR rule has no violations; evidence:
-  `reports/latest/check.{json,md}`.
-- On 2026-08-19, `python tools.py build` exited 0 and produced
-  `firmware/FDCAN_TOOL_cmake/build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf`; evidence:
-  `reports/latest/build.{json,md}` and build logs.
+- The completion decision is the automatically generated
+  [`quality report`](../../../reports/latest/quality.md), which links the executed
+  [`doctor`](../../../reports/latest/doctor.md), [`repository check`](../../../reports/latest/check.md),
+  and [`build`](../../../reports/latest/build.md) reports.
 
 ## Out of Scope
 

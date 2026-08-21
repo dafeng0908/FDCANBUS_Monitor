@@ -5,7 +5,7 @@
 The firmware target is `FDCAN_TOOL` in `FDCAN_TOOL_cmake/`. `python tools.py build` first
 uses the optional CubeIDE toolchain path in `config/harness.toml`; if it is unavailable, it
 uses `arm-none-eabi-gcc` from `PATH`. This makes the same build command work locally and in
-CI. The resulting ELF is expected at
+CI. The selected compiler must match the pinned ARM GNU Toolchain 14.3.1. The resulting ELF is expected at
 `FDCAN_TOOL_cmake/build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf`.
 
 ## Generated code

@@ -11,6 +11,9 @@ artifact = "build/debug_GCC_NUCLEO-C542RC/FDCAN_TOOL.elf"
 timeout_seconds = 600
 
 [tools]
+arm_gnu_toolchain_version = "14.3.1"
+# GitHub action release 14.3.Rel1 provides compiler version 14.3.1.
+arm_gnu_toolchain_release = "14.3.Rel1"
 # 請依實際安裝版本修改。
 # Windows TOML 建議使用正斜線。
 stm32cubeide = "C:/ST/STM32CubeIDE_2.2.0/STM32CubeIDE/stm32cubeide.exe"

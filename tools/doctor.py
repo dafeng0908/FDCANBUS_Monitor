@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 import sys
 import tomllib
 from pathlib import Path
@@ -40,6 +41,53 @@ def check_python() -> CheckResult:
     )
 
 
+def check_executable_version(
+    executable: str,
+    *,
+    required: bool,
+    display_name: str,
+) -> CheckResult:
+    """Run an executable's version command and return its reported version."""
+    try:
+        completed = subprocess.run(
+            [executable, "--version"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return CheckResult(
+            name=display_name,
+            status=Status.FAIL if required else Status.WARN,
+            message=f"Could not run {display_name} --version: {exc}",
+            required=required,
+        )
+
+    output = completed.stdout.strip() or completed.stderr.strip()
+    if completed.returncode != 0:
+        return CheckResult(
+            name=display_name,
+            status=Status.FAIL if required else Status.WARN,
+            message=(
+                f"{display_name} --version exited {completed.returncode}: "
+                f"{output or 'no output'}"
+            ),
+            required=required,
+        )
+
+    version_line = next(
+        (line.strip() for line in output.splitlines() if line.strip()),
+        "Version command succeeded.",
+    )
+    return CheckResult(
+        name=display_name,
+        status=Status.PASS,
+        message=f"{executable} — {version_line}",
+        required=required,
+    )
+
+
 def check_tool(
     command: str,
     *,
@@ -53,11 +101,10 @@ def check_tool(
     tool_path = shutil.which(command)
 
     if tool_path:
-        return CheckResult(
-            name=name,
-            status=Status.PASS,
-            message=tool_path,
+        return check_executable_version(
+            tool_path,
             required=required,
+            display_name=name,
         )
 
     return CheckResult(
@@ -83,17 +130,19 @@ def check_configured_arm_toolchain() -> CheckResult:
         )
 
     if compiler.is_file():
-        return CheckResult(
-            name="ARM GNU Toolchain", status=Status.PASS,
-            message=str(compiler), required=False,
+        return check_executable_version(
+            str(compiler),
+            required=False,
+            display_name="ARM GNU Toolchain",
         )
 
-    path_compiler = shutil.which("arm-none-eabi-gcc")
-    if path_compiler:
-        return CheckResult(
-            name="ARM GNU Toolchain", status=Status.PASS,
-            message=f"Found on PATH: {path_compiler}", required=False,
-        )
+    path_result = check_tool(
+        "arm-none-eabi-gcc",
+        required=False,
+        display_name="ARM GNU Toolchain",
+    )
+    if not path_result.message.endswith("was not found in PATH."):
+        return path_result
 
     return CheckResult(
         name="ARM GNU Toolchain", status=Status.WARN,

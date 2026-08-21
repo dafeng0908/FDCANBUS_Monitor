@@ -47,6 +47,9 @@ ACTIVE_PLAN_REQUIRED_SECTIONS = [
     "Objective",
     "Scope",
     "Acceptance Criteria",
+    "Current Step",
+    "Next Action",
+    "Last Verified Commit",
     "Verification Evidence",
     "Out of Scope",
 ]

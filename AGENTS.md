@@ -30,14 +30,12 @@ docs/requirements/
 
 ## Commands
 
-python tools.py doctor
-python tools.py check
-python tools.py build
+python tools.py quality
 
 ## Definition of Done
 
 - Relevant code and documents are updated.
-- Repository and architecture checks pass.
-- Test and analysis results contain actual evidence.
+- `python tools.py quality` passes.
+- Test and analysis results are linked from the generated quality report.
 - The active execution plan is updated.
 - A timestamped change record is added under `history/`.

@@ -8,6 +8,7 @@ from tools.architecture_check import run as run_architecture_check
 from tools.build import run as run_build
 from tools.check import run as run_check
 from tools.doctor import run as run_doctor
+from tools.quality import run as run_quality
 
 
 Command = Callable[[], int]
@@ -29,6 +30,11 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers.add_parser(
         "doctor",
         help="Check local development tools and environment",
+    )
+
+    subparsers.add_parser(
+        "quality",
+        help="Run the complete quality gate and publish the completion decision",
     )
 
     subparsers.add_parser(
@@ -62,6 +68,7 @@ def main() -> int:
 
     commands: dict[str, Command] = {
         "doctor": run_doctor,
+        "quality": run_quality,
         "check": run_check,
         "architectures": run_architecture_check,
         "build": run_build,

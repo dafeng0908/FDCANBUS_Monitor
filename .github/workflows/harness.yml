@@ -8,6 +8,8 @@ on:
 jobs:
   stage-0:
     runs-on: ubuntu-latest
+    env:
+      ARM_GNU_TOOLCHAIN_RELEASE: 14.3.Rel1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -16,12 +18,9 @@ jobs:
       - name: Install ARM GNU Toolchain
         uses: carlosperate/arm-none-eabi-gcc-action@v1
         with:
-          release: 14.3.Rel1
-      - name: Verify harness and firmware build
-        run: |
-          python tools.py doctor
-          python tools.py check
-          python tools.py build
+          release: ${{ env.ARM_GNU_TOOLCHAIN_RELEASE }}
+      - name: Run quality gate
+        run: python tools.py quality
       - name: Upload build evidence
         if: always()
         uses: actions/upload-artifact@v4

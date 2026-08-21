@@ -43,6 +43,56 @@ def configured_toolchain_bin() -> Path | None:
         return None
 
 
+def required_arm_gnu_version() -> str | None:
+    """Return the compiler version pinned by the repository configuration."""
+    try:
+        with CONFIG_PATH.open("rb") as config_file:
+            tools = tomllib.load(config_file)["tools"]
+        return str(tools["arm_gnu_toolchain_version"])
+    except (KeyError, OSError, tomllib.TOMLDecodeError):
+        return None
+
+
+def check_arm_gnu_version(compiler: Path) -> CheckResult:
+    """Require the selected compiler to match the repository's pinned version."""
+    expected_version = required_arm_gnu_version()
+    if not expected_version:
+        return CheckResult(
+            name="arm-gnu-toolchain-version",
+            status=Status.FAIL,
+            message="Missing tools.arm_gnu_toolchain_version configuration.",
+            file="config/harness.toml",
+        )
+
+    version = run_command([str(compiler), "--version"], timeout_seconds=30)
+    output = version.stdout.strip() or version.stderr.strip()
+    if version.returncode != 0:
+        return CheckResult(
+            name="arm-gnu-toolchain-version",
+            status=Status.FAIL,
+            message=f"arm-none-eabi-gcc --version exited {version.returncode}.",
+            file="config/harness.toml",
+        )
+
+    if expected_version not in output:
+        return CheckResult(
+            name="arm-gnu-toolchain-version",
+            status=Status.FAIL,
+            message=(
+                f"Expected ARM GNU Toolchain {expected_version}; "
+                f"detected {output.splitlines()[0] if output else 'no version output'}."
+            ),
+            file="config/harness.toml",
+        )
+
+    return CheckResult(
+        name="arm-gnu-toolchain-version",
+        status=Status.PASS,
+        message=f"ARM GNU Toolchain {expected_version} is pinned and selected.",
+        file="config/harness.toml",
+    )
+
+
 def find_arm_gnu_compiler() -> tuple[Path | None, Path | None]:
     """Find the compiler from the repository override or the current PATH.
 
@@ -89,6 +139,18 @@ def run() -> int:
         ))
         write_build_logs("", message + "\n")
     else:
+        compiler_version = check_arm_gnu_version(compiler)
+        results.append(compiler_version)
+        if compiler_version.status != Status.PASS:
+            write_build_logs("", compiler_version.message + "\n")
+            print_results(results)
+            json_path, markdown_path = write_reports(
+                report_name="build", command="python tools.py build",
+                exit_code=1, results=results,
+            )
+            print(f"[INFO] JSON report: {json_path}")
+            print(f"[INFO] Markdown report: {markdown_path}")
+            return 1
         try:
             config = load_firmware_config()
             project_dir = REPO_ROOT / str(config["project_dir"])

@@ -113,7 +113,8 @@ Only `firmware/BSP/` may include STM32 HAL headers, call HAL APIs, or own FDCAN 
 `firmware/Services/` shall expose hardware-independent frame, queue, and status interfaces;
 `firmware/App/` shall depend only on those service interfaces.
 
-**Verification:** `python tools.py check` reports zero architecture-boundary violations.
+**Verification:** `python tools.py quality` passes, including the repository check that reports
+zero architecture-boundary violations.
 
 ### REQ-QUAL-001 — produce reproducible evidence
 
@@ -148,8 +149,8 @@ their actual results; no command may report PASS without being executed.
 | REQ-FDCAN-004 | T-ARCH-002, T-FDCAN-030, T-FDCAN-031 | `reports/latest/` |
 | REQ-FDCAN-005 | T-FDCAN-040 | `reports/latest/` |
 | REQ-FDCAN-006 | T-FDCAN-050, T-FDCAN-051 | `reports/latest/` |
-| REQ-ARCH-001 | `python tools.py check` | `reports/latest/check.{json,md}` |
-| REQ-QUAL-001 | harness command reports | `reports/latest/` |
+| REQ-ARCH-001 | `python tools.py quality` | `reports/latest/quality.{json,md}` |
+| REQ-QUAL-001 | `python tools.py quality` | `reports/latest/quality.{json,md}` |
 
 An execution plan that implements any requirement above must cite its requirement IDs and
 record actual verification evidence before it is moved to `docs/exec-plans/completed/`.

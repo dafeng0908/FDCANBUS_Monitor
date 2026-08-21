@@ -2,12 +2,10 @@
 
 ## Stage 0
 
-- [ ] `python tools.py doctor` executes
-- [ ] `python tools.py check` executes
+- [ ] `python tools.py quality` passes as the sole completion decision
 - [ ] Required repository paths exist
 - [ ] No command reports false PASS
-- [ ] AGENTS.md commands are valid
-- [ ] CI runs the same local commands
+- [ ] CI runs `python tools.py quality`
 
 ## Stage 1 Firmware
 
@@ -27,3 +25,6 @@ Every PASS result must include:
 - Tool version
 - Exit code
 - Report path
+
+The generated `reports/latest/quality.md` is the sole evidence entry point for completion. It
+links the actual `doctor`, `check`, and `build` executions.
