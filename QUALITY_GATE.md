@@ -7,6 +7,14 @@
 - [ ] No command reports false PASS
 - [ ] CI runs `python tools.py quality`
 
+## Protocol Contract
+
+- [ ] `protocol/protocol.json` validates
+- [ ] Generated DBC matches the protocol document
+- [ ] Generated UI page metadata matches the protocol document
+- [ ] Generated C interface matches the protocol document
+- [ ] Generated protocol artifacts are not stale or manually modified
+
 ## Stage 1 Firmware
 
 - [ ] Firmware build returns exit code 0
@@ -18,8 +26,9 @@
 
 ## Quality command graph
 
-`python tools.py quality` executes `doctor`, `check`, `build`, `cppcheck`, `test`, and
-`coverage` in order. All six commands must exit 0 before `quality.md` reports PASS.
+`python tools.py quality` executes `doctor`, `check`, `protocol-check`, `build`, `cppcheck`,
+`test`, and `coverage` in order. All seven commands must exit 0 before `quality.md` reports
+PASS.
 
 ## Evidence
 
@@ -27,9 +36,8 @@ Every PASS result must include:
 
 - Command executed
 - Timestamp
-- Tool version
+- Tool version when applicable
 - Exit code
 - Report path
 
-The generated `reports/latest/quality.md` is the sole evidence entry point for completion. It
-links the actual `doctor`, `check`, `build`, `cppcheck`, `test`, and `coverage` executions.
+The generated `reports/latest/quality.md` is the sole evidence entry point for completion.

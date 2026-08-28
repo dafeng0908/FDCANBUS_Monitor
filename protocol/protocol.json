@@ -1,0 +1,76 @@
+{
+  "protocol": {
+    "name": "FDCANBUS_Monitor",
+    "version": "1.0.0",
+    "bus": "CAN_FD",
+    "nominal_bitrate": 500000,
+    "data_bitrate": 1000000
+  },
+  "messages": [
+    {
+      "name": "BMS_STATUS",
+      "id": "0x180",
+      "dlc": 8,
+      "cycle_ms": 100,
+      "signals": [
+        {
+          "name": "pack_voltage",
+          "start_bit": 0,
+          "length": 16,
+          "endian": "little",
+          "signed": false,
+          "factor": 0.1,
+          "offset": 0,
+          "unit": "V",
+          "min": 0,
+          "max": 1000,
+          "ui": {
+            "page": "Overview",
+            "group": "Battery",
+            "widget": "value",
+            "order": 1,
+            "precision": 1
+          }
+        },
+        {
+          "name": "pack_current",
+          "start_bit": 16,
+          "length": 16,
+          "endian": "little",
+          "signed": true,
+          "factor": 0.1,
+          "offset": 0,
+          "unit": "A",
+          "min": -3200,
+          "max": 3200,
+          "ui": {
+            "page": "Overview",
+            "group": "Battery",
+            "widget": "value",
+            "order": 2,
+            "precision": 1
+          }
+        },
+        {
+          "name": "soc",
+          "start_bit": 32,
+          "length": 8,
+          "endian": "little",
+          "signed": false,
+          "factor": 0.5,
+          "offset": 0,
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "ui": {
+            "page": "Overview",
+            "group": "SOC",
+            "widget": "gauge",
+            "order": 1,
+            "precision": 1
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -11,6 +11,8 @@ from tools.ceedling_runner import run as run_test
 from tools.coverage_runner import run as run_coverage
 from tools.cppcheck_runner import run as run_cppcheck
 from tools.doctor import run as run_doctor
+from tools.protocol_generator import run_check as run_protocol_check
+from tools.protocol_generator import run_generate as run_protocol
 from tools.quality import run as run_quality
 
 
@@ -18,9 +20,7 @@ Command = Callable[[], int]
 
 
 def create_parser() -> argparse.ArgumentParser:
-    """
-    建立 CANBUS Monitor Harness 的命令列解析器。
-    """
+    """建立 CANBUS Monitor Harness 的命令列解析器。"""
     parser = argparse.ArgumentParser(
         description="CANBUS Monitor development harness",
     )
@@ -34,53 +34,48 @@ def create_parser() -> argparse.ArgumentParser:
         "doctor",
         help="Check local development tools and environment",
     )
-
     subparsers.add_parser(
         "quality",
         help="Run the complete quality gate and publish the completion decision",
     )
-
     subparsers.add_parser(
         "check",
         help="Check repository contract, active plan and architecture rules",
     )
-
     subparsers.add_parser(
         "architectures",
         help="Run firmware architecture checks",
     )
-
     subparsers.add_parser(
         "build",
         help="Build firmware and PC tool",
     )
-
     subparsers.add_parser(
         "cppcheck",
         help="Run static analysis for hand-written firmware sources",
     )
-
     subparsers.add_parser(
         "test",
         help="Run the Ceedling unit-test suite",
     )
-
     subparsers.add_parser(
         "coverage",
         help="Run coverage-instrumented tests and enforce coverage thresholds",
+    )
+    subparsers.add_parser(
+        "protocol",
+        help="Generate DBC, UI page metadata, and C code from the protocol document",
+    )
+    subparsers.add_parser(
+        "protocol-check",
+        help="Validate the protocol document and verify generated artifacts are current",
     )
 
     return parser
 
 
 def main() -> int:
-    """
-    Harness CLI 主入口。
-
-    Returns:
-        0：命令成功。
-        非 0：命令失敗、環境缺失或功能尚未實作。
-    """
+    """Harness CLI 主入口。"""
     parser = create_parser()
     args = parser.parse_args()
 
@@ -93,10 +88,11 @@ def main() -> int:
         "cppcheck": run_cppcheck,
         "test": run_test,
         "coverage": run_coverage,
+        "protocol": run_protocol,
+        "protocol-check": run_protocol_check,
     }
 
     command = commands.get(args.command)
-
     if command is None:
         parser.print_help()
         return 2

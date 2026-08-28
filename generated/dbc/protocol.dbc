@@ -1,0 +1,6 @@
+CM_ "AUTO GENERATED FROM protocol/protocol.json SHA256=3bf6f9382c14057e87c4e97c5bd8e992e111a59f50792bc44065f2a971964d91";
+
+BO_ 384 BMS_STATUS: 8 Vector__XXX
+ SG_ pack_voltage : 0|16@1+ (0.1,0) [0|1000] "V" Vector__XXX
+ SG_ pack_current : 16|16@1- (0.1,0) [-3200|3200] "A" Vector__XXX
+ SG_ soc : 32|8@1+ (0.5,0) [0|100] "%" Vector__XXX

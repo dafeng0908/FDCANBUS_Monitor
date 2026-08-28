@@ -18,6 +18,15 @@ docs/architectures/
 
 docs/requirements/
 
+## Protocol Contract
+
+- `protocol/protocol.json` is the single source of truth for CAN message encoding and UI
+  presentation metadata.
+- Files under `generated/dbc/`, `generated/page/`, and `generated/c/` are generated artifacts.
+- Never edit generated protocol artifacts manually.
+- After changing the protocol document, run `python tools.py protocol` and then
+  `python tools.py quality`.
+
 ## Mandatory Rules
 
 - HAL APIs are allowed only in the BSP layer.
@@ -35,6 +44,7 @@ python tools.py quality
 ## Definition of Done
 
 - Relevant code and documents are updated.
+- Generated protocol artifacts match `protocol/protocol.json`.
 - `python tools.py quality` passes.
 - Test and analysis results are linked from the generated quality report.
 - The active execution plan is updated.

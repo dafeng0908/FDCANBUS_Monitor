@@ -8,7 +8,15 @@ from tools.report_generator import write_reports
 from tools.result import CheckResult, Status, print_results
 
 
-QUALITY_COMMANDS = ("doctor", "check", "build", "cppcheck", "test", "coverage")
+QUALITY_COMMANDS = (
+    "doctor",
+    "check",
+    "protocol-check",
+    "build",
+    "cppcheck",
+    "test",
+    "coverage",
+)
 DEFAULT_COMMAND_TIMEOUT_SECONDS = 60
 BUILD_TIMEOUT_BUFFER_SECONDS = 60
 DEFAULT_BUILD_PHASE_TIMEOUT_SECONDS = 600
