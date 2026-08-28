@@ -19,6 +19,12 @@ jobs:
         uses: carlosperate/arm-none-eabi-gcc-action@v1
         with:
           release: ${{ env.ARM_GNU_TOOLCHAIN_RELEASE }}
+      - name: Install quality tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck ruby-full
+          python -m pip install "gcovr>=8,<9"
+          sudo gem install ceedling --no-document
       - name: Run quality gate
         run: python tools.py quality
       - name: Upload build evidence
