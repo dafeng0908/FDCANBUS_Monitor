@@ -1,0 +1,46 @@
+{
+  "generated_from": "protocol/protocol.json",
+  "source_hash": "3bf6f9382c14057e87c4e97c5bd8e992e111a59f50792bc44065f2a971964d91",
+  "protocol_version": "1.0.0",
+  "pages": [
+    {
+      "name": "Overview",
+      "groups": [
+        {
+          "name": "Battery",
+          "items": [
+            {
+              "signal": "pack_voltage",
+              "message": "BMS_STATUS",
+              "widget": "value",
+              "order": 1,
+              "precision": 1,
+              "unit": "V"
+            },
+            {
+              "signal": "pack_current",
+              "message": "BMS_STATUS",
+              "widget": "value",
+              "order": 2,
+              "precision": 1,
+              "unit": "A"
+            }
+          ]
+        },
+        {
+          "name": "SOC",
+          "items": [
+            {
+              "signal": "soc",
+              "message": "BMS_STATUS",
+              "widget": "gauge",
+              "order": 1,
+              "precision": 1,
+              "unit": "%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
